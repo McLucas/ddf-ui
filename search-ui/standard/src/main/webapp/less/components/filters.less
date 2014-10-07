@@ -1,0 +1,161 @@
+.filter-view {
+
+  .top-bar {
+    padding: 6px 0px;
+    border-top: 1px solid #444;
+  }
+
+  .filter-status {
+    border-top: 1px solid #444;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .filter-menu {
+    //max-height: 0px;
+    //overflow: hidden;
+    display: none;
+    margin: 0 0 0 -10px;
+  }
+
+  .add {
+    padding-top: 4px;
+    padding-right: 6px;
+    padding-left: 6px;
+    .i-clickable();
+  }
+
+  .btn.add {
+    margin-left: 6px;
+  }
+
+  .item {
+    display: block;
+    border-top: 1px solid #444;
+    padding: 6px 0px;
+    overflow: auto; // float auto height magic.
+
+    select, input {
+      width: auto;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    select {
+      padding: 0px;
+    }
+
+
+
+    .input-group,
+    .operator-group,
+    .metadata-field-group,
+    .button-group {
+      //  display: inline-block;
+      float: left;
+      vertical-align: top;
+    }
+
+    .metadata-field-group {
+      margin-right: 5px;
+    }
+
+    .metadata-field-group select {
+      width: 80px;
+      margin-bottom: 0px;
+    }
+
+    .operator-group {
+      margin-right: 5px;
+    }
+
+    .operator-group select {
+      width: 80px;
+      margin-bottom: 0px;
+    }
+
+    .input-group input {
+      width: 165px;
+      margin-bottom: 0px;
+    }
+
+    .button-group {
+      float: right;
+      padding-top: 4px;
+      padding-right: 6px;
+      padding-left: 6px;
+      cursor: pointer;
+
+      i {
+        .i-clickable();
+      }
+
+
+    }
+
+    &:last-child {
+      padding-bottom: 6px;
+    }
+  }
+
+  &.active {
+    .filter-menu {
+      //max-height: 420px;
+
+      display: block;
+      transition: max-height 1s ease 0s;
+      transition-delay: 0s;
+    }
+  }
+}
+
+// this is in the latest bootstrap, once its upgraded we probably don't need this once we update to latest bootstrap.
+.has-feedback {
+  position: relative;
+
+  .form-control-feedback {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    z-index: 2;
+    display: block;
+    width: 34px;
+    text-align: center;
+  }
+
+  &.has-value {
+    .form-control-feedback {
+      display: none;
+    }
+  }
+}
+
+
+@media (min-width: 700px){
+  .full-screen-search {
+
+    .filter-view {
+      .metadata-field-group select {
+        width: auto;
+      }
+
+      .operator-group select {
+        width: auto;
+      }
+
+      .input-group input {
+        width: 400px;
+        margin-bottom: 0px;
+      }
+    }
+  }
+}
+
+@media (min-width: 1000px){
+  .full-screen-search {
+    .filter-menu {
+      width: 1000px;
+      margin: 0 auto;
+    }
+  }
+}

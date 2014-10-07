@@ -107,6 +107,10 @@ module.exports = function (grunt) {
 //                    '<%= jshint.files %>'
                 ]
             },
+            lessFiles: {
+                files: ['src/main/webapp/less/*.less','src/main/webapp/less/**/*.less','src/main/webapp/less/***/*.less'],
+                tasks: ['less']
+            },
             cssFiles : {
                 files :['src/main/webapp/css/*.css'],
                 tasks : ['cssmin']
@@ -141,6 +145,16 @@ module.exports = function (grunt) {
                     server: './server.js'
                 }
             }
+        },
+        less: {
+            css: {
+                options: {
+                    cleancss: true
+                },
+                files: {
+                    "src/main/webapp/css/styles.css":"src/main/webapp/less/styles.less"
+                }
+            }
         }
     });
 
@@ -153,6 +167,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sed');
     grunt.loadNpmTasks('grunt-express');
     grunt.loadNpmTasks('grunt-casperjs');
+    grunt.loadNpmTasks('grunt-contrib-less');
+
     grunt.registerTask('test', ['express:test', 'casperjs']);
 
     grunt.registerTask('bower-offline-install', 'Bower offline install work-around', function() {
@@ -187,7 +203,7 @@ module.exports = function (grunt) {
                done();
             });
     });
-    var buildTasks = ['clean', 'bower-offline-install', 'sed', 'copy', 'cssmin', 'jshint'];
+    var buildTasks = ['clean', 'bower-offline-install', 'sed', 'copy', 'less','cssmin', 'jshint'];
 
     try {
         grunt.log.writeln('Checking for python');

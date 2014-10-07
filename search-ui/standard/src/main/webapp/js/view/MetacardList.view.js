@@ -19,6 +19,7 @@ define([
         'spin',
         'spinnerConfig',
         'wreqr',
+        './filter/FilterLayout.view',
         'text!templates/resultlist/resultListItem.handlebars',
         'text!templates/resultlist/resultList.handlebars',
         'text!templates/resultlist/countlow.handlebars',
@@ -27,7 +28,7 @@ define([
         'text!templates/resultlist/status.handlebars',
         'properties'
     ],
-    function (Marionette, _, ich, dir, Spinner, spinnerConfig, wreqr, resultListItemTemplate, resultListTemplate, countLowTemplate, countHighTemplate, statusItemTemplate, statusTemplate, properties) {
+    function (Marionette, _, ich, dir, Spinner, spinnerConfig, wreqr, FilterLayoutView,resultListItemTemplate, resultListTemplate, countLowTemplate, countHighTemplate, statusItemTemplate, statusTemplate, properties) {
         "use strict";
 
         var List = {};
@@ -190,7 +191,8 @@ define([
             itemViewContainer: 'tbody',
             events: {
                 'click #status-icon': 'toggleStatus',
-                'click #refresh-icon': 'refreshResults'
+                'click #refresh-icon': 'refreshResults',
+                'click .result-filter-icon': 'toggleFilter'
             },
             initialize: function() {
                 if (this.collection) {
@@ -205,6 +207,10 @@ define([
                 if (!this.isSearchRunning()) {
                     this.collection.parents[0].parents[0].startSearch();
                 }
+            },
+            toggleFilter: function(){
+                console.log('toggleFilter');
+                wreqr.vent.trigger('toggleFilterMenu');
             },
             onRender: function() {
                 this.setRefreshIcon();
@@ -257,7 +263,8 @@ define([
             regions: {
                 countRegion: '.result-count',
                 listRegion: '#resultList',
-                statusRegion: '#result-status-list'
+                statusRegion: '#result-status-list',
+                filterRegion: '.filter-region'
             },
             modelEvents: {
                 'change': 'render'
@@ -276,6 +283,9 @@ define([
                     }));
                 }
                 this.countRegion.show(new List.CountView({
+                    model: this.model
+                }));
+                this.filterRegion.show(new FilterLayoutView({
                     model: this.model
                 }));
             },
