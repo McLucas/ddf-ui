@@ -44,16 +44,16 @@ table a:not(.btn), .table a:not(.btn),
     background-color: rgba(100,100,100,0.1);
 }
 
-.dropdown-menu {
-    background-color: #363636;
-    height: auto;
-    max-height: 600px;
-    overflow: hidden;
-    z-index: 10000;
-    padding: 0;
-    right: 0;
-    left: auto !important;
-}
+/*.dropdown-menu {*/
+    /*background-color: #363636;*/
+    /*height: auto;*/
+    /*max-height: 600px;*/
+    /*overflow: hidden;*/
+    /*z-index: 10000;*/
+    /*padding: 0;*/
+    /*right: 0;*/
+    /*left: auto !important;*/
+/*}*/
 
 .navbar .nav>li>.dropdown-menu:after {
     border-bottom: 6px solid #363636 !important;

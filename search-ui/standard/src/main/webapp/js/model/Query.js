@@ -119,6 +119,7 @@ define([
             setRadiusUsng: function () {
                 var result = converter.USNGtoLL(this.get('usng'), true);
                 this.set(result);
+            },
 
             toFilters: function(){
                 var filters = [];

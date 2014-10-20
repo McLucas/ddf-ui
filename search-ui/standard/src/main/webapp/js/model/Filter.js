@@ -34,7 +34,7 @@ define([
         'metacard-type': 'metacard_type_name'
     };
 
-    var excludeFromCQL = ['source-id','anyGeo'];
+    var excludeFromCQL = ['source-id'];
 
     Filter.CQLFactory = {
         toCQL: function(filter){
@@ -42,7 +42,7 @@ define([
             var fieldType = filter.get('fieldType');
             var fieldOperator = filter.get('fieldOperator');
             if(!_.contains(excludeFromCQL, fieldName) && Filter.CQLFactory[fieldType] && Filter.CQLFactory[fieldType][fieldOperator]){
-                return Filter.CQLFactory[fieldType][fieldOperator](filter); // fun
+                return "(" + Filter.CQLFactory[fieldType][fieldOperator](filter) + ")"; // fun
             }
             return null;
         },
@@ -122,6 +122,12 @@ define([
         anyGeo: {
             'equals': function(filter){
                 return filter.get('geoValue1');
+            },
+            'contains': function(filter) {
+                return filter.get('geoValue1');
+            },
+            'intersect': function(filter) {
+                return filter.get('geoValue1');
             }
         }
     };
@@ -166,7 +172,7 @@ define([
                 var hasString = type === 'string' && stringValue1 && stringValue1 !== '';
                 var hasNumber = type === 'number' && numberValue1 && numberValue1 !== '';
                 var hasDate = type === 'date' && dateValue1 && dateValue1 !== '';
-                var hasGeo = type === 'geo' && geoValue1 && geoValue1 !== '';
+                var hasGeo = type === 'anyGeo' && geoValue1 && geoValue1 !== '';
                 if(hasNumber || hasString || hasDate || hasGeo){
                     return false; // no value value.
                 }
