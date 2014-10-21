@@ -178,10 +178,26 @@ define([
         });
 
         List.StatusRow = Marionette.ItemView.extend({
+            events: {
+                'click .hit-count-text':'hitCountClicked'
+            },
             tagName: 'tr',
             template: 'statusItemTemplate',
             modelEvents: {
                 "change": "render"
+            },
+            hitCountClicked: function(){
+
+                var valueCount = this.model.get('hit-count');
+                var fieldValue = this.model.get('id');
+                var fieldName = 'source-id';
+
+                wreqr.vent.trigger('facetSelected', {
+                    valueCount: valueCount,
+                    fieldValue: fieldValue,
+                    fieldName: fieldName
+                });
+
             }
         });
     
@@ -191,8 +207,7 @@ define([
             itemViewContainer: 'tbody',
             events: {
                 'click #status-icon': 'toggleStatus',
-                'click #refresh-icon': 'refreshResults',
-                'click .result-filter-icon': 'toggleFilter'
+                'click #refresh-icon': 'refreshResults'
             },
             initialize: function() {
                 if (this.collection) {
@@ -202,6 +217,13 @@ define([
             toggleStatus: function() {
                 this.$('#status-table').toggleClass('shown hidden');
                 this.$('#status-icon').toggleClass('fa-caret-down fa-caret-right');
+                wreqr.vent.trigger('toggleFilterMenu');
+            },
+            initFromFilter: function(){
+                var showFilter = wreqr.reqres.request('getShowFilterFlag');
+                if(showFilter){
+                    this.toggleStatus();
+                }
             },
             refreshResults: function() {
                 if (!this.isSearchRunning()) {
@@ -209,11 +231,11 @@ define([
                 }
             },
             toggleFilter: function(){
-                console.log('toggleFilter');
                 wreqr.vent.trigger('toggleFilterMenu');
             },
             onRender: function() {
                 this.setRefreshIcon();
+                this.initFromFilter();
             },
             setRefreshIcon: function() {
                 if (this.isSearchRunning()) {

@@ -27,11 +27,18 @@ define([
 
                 this.fields = [];
                 this.facetCounts = {};
+                this.showFilterFlag = false;
 
                 wreqr.reqres.setHandler('getFields', this.getFields);
                 wreqr.reqres.setHandler('getFacetCounts', this.getFacetCounts);
+                wreqr.reqres.setHandler('getShowFilterFlag', this.getShowFilterFlag);
                 this.listenTo(wreqr.vent,'processSearch', this.processSearch);
+                this.listenTo(wreqr.vent,'filterFlagChanged', this.filterFlagChanged);
 
+            },
+
+            getShowFilterFlag: function(){
+                return this.showFilterFlag;
             },
 
             getFacetCounts: function(){
@@ -39,12 +46,16 @@ define([
             },
 
             getFields: function(){
-                console.log(this.fields);
                 return this.fields;
             },
 
+            filterFlagChanged: function(isFilterShown){
+                this.showFilterFlag = isFilterShown;
+            },
+
             processSearch: function(searchToProcess){
-                var array = [{name: 'anyText', type: 'string'},{name: 'anyGeo', type: 'anyGeo'}]; // default all field
+                // default all field
+                var array = [{name: 'anyText', type: 'string'},{name: 'anyGeo', type: 'anyGeo'}];
                 var facetCounts = {};
 
                 // time to iterate through the results and metacards to build our field list and facet list.
@@ -74,10 +85,17 @@ define([
                                 facetCounts[pair[0]] = {};
                             }
                             // lets increment the facet value.  If none exist, create one with value of 1.
-                            if(_.has(facetCounts[pair[0]],pair[1])){
-                                facetCounts[pair[0]][pair[1]]++;
+                            var curValue = pair[1];
+                            if(pair[0] === 'metadata-content-type'){
+                                var term = $(pair[1]).attr('term');  // TODO FIX THIS HACK once xml isn't coming back as the metacard-content-type.
+                                if(term){
+                                    curValue = term;
+                                }
+                            }
+                            if(_.has(facetCounts[pair[0]],curValue)){
+                                facetCounts[pair[0]][curValue]++;
                             } else {
-                                facetCounts[pair[0]][pair[1]] = 1;
+                                facetCounts[pair[0]][curValue] = 1;
                             }
                         });
                     });
@@ -89,7 +107,6 @@ define([
             registerFields: function(newFields){
                 var that = this;
                 _.each(newFields, function(newField){
-                    console.log('testing' + newField);
                     var currentFieldNames = _.pluck(that.fields, 'name');
                     if(!_.contains(currentFieldNames, newField.name)){
                         that.fields.push(newField);
@@ -98,7 +115,40 @@ define([
             },
 
             registerFacetCounts: function(facetCounts){
-                this.facetCounts = _.pick(facetCounts,['metadata-content-type','source-id', 'metacard-type']);
+                var controller = this;
+
+                var sources = wreqr.reqres.request("workspace:getsources");
+                var contentTypes = wreqr.reqres.request("workspace:gettypes");
+
+                var sourceIds = sources.pluck('id');
+                var contentTypeIds = contentTypes.pluck('name');
+
+
+                controller.facetCounts = _.pick(facetCounts,['metadata-content-type','metacard-type']);
+
+                controller.facetCounts = _.extend({
+                    'metadata-content-type': {}
+                }, controller.facetCounts);
+
+                var keys = _.keys(controller.facetCounts);
+                 _.each(keys, function(key){
+                    console.log(key);
+                    if(key === 'source-id'){
+                        _.each(sourceIds, function(sourceId){
+                            if(!_.has(controller.facetCounts[key], sourceId)){
+                                controller.facetCounts[key][sourceId] = 0;
+                            }
+                        });
+
+                    } else if(key === 'metadata-content-type'){
+                        _.each(contentTypeIds, function(contentTypeId){
+                            if(!_.has(controller.facetCounts[key], contentTypeId)){
+                                controller.facetCounts[key][contentTypeId] = 0;
+                            }
+                        });
+                    }
+                });
+
             }
 
         });

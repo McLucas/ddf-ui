@@ -28,6 +28,7 @@ define([
 
         var FacetItemView = Marionette.ItemView.extend({
             template: 'facetItemTemplate',
+            tagName: 'tr',
             events: {
                 'click .field-value': 'fieldValueClicked'
             },
@@ -36,7 +37,6 @@ define([
                 var valueCount = element.attr('data-value-count');
                 var fieldValue = element.attr('data-field-value');
                 var fieldName = element.attr('data-field-name');
-                console.log(valueCount+":"+fieldValue+":"+fieldName);
 
                 wreqr.vent.trigger('facetSelected', {
                     valueCount: valueCount,

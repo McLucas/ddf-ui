@@ -68,6 +68,13 @@ define([
                 var fields = wreqr.reqres.request('getFields');
                 view.facetsRegion.show(new FacetCollectionView({model: view.model, facetCounts: facetCounts}));
                 view.filtersRegion.show(new FilterCollectionView({model: view.model, fields: fields}));
+                this.initShowFilter();
+            },
+            initShowFilter: function(){
+                var showFilter = wreqr.reqres.request('getShowFilterFlag');
+                if(showFilter){
+                    this.$el.toggleClass('active', true);
+                }
             },
             addPressed: function(){
                 var view = this;
@@ -80,22 +87,25 @@ define([
                 }));
             },
             applyPressed: function(){
-                console.log('starting search.');
                 this.collection.trimUnfinishedFilters();
                 this.queryObject.startSearch();
-                console.log('starting search. END');
             },
             toggleFilterVisibility: function(){
                 this.$el.toggleClass('active');
+                wreqr.vent.trigger('filterFlagChanged', this.$el.hasClass('active'));
             },
             toggleFilterView: function(){
                 wreqr.vent.trigger('toggleFilterMenu');
             },
             addFacet: function(facet){
+                // lets remove any filters first.
+                var existingFilters = this.collection.where({fieldName: facet.fieldName});
+                this.collection.remove(existingFilters);
+
                 this.collection.add(new Filter.Model({
                     fieldName: facet.fieldName,
-                    fieldType: 'string', // TODO not all facets will support equals.
-                    fieldOperator: 'equals',
+                    fieldType: 'string', // TODO not all facets will support equals and strings
+                    fieldOperator: 'contains',
                     stringValue1: facet.fieldValue
                 }));
                 this.collection.trimUnfinishedFilters();

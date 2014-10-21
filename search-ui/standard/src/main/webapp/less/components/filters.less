@@ -1,10 +1,5 @@
 .filter-view {
 
-  .top-bar {
-    padding: 6px 0px;
-    border-top: 1px solid #444;
-  }
-
   .filter-status {
     border-top: 1px solid #444;
     text-align: center;
@@ -15,12 +10,12 @@
     //max-height: 0px;
     //overflow: hidden;
     display: none;
-    margin: 0px 8px;
+    //margin: 0px 8px;
   }
 
   .add {
     padding-top: 4px;
-    padding-right: 6px;
+//    padding-right: 6px;
     padding-left: 6px;
     .i-clickable();
   }
@@ -76,7 +71,7 @@
     }
 
     .value-input-group input {
-      width: 165px;
+      width: 180px;
       margin-bottom: 0px;
     }
 
@@ -90,13 +85,15 @@
       i {
         .i-clickable();
       }
-
-
     }
 
     &:last-child {
       padding-bottom: 6px;
     }
+  }
+
+  .field-value {
+    font-size: small;
   }
 
   &.active {

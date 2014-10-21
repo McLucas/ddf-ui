@@ -13,7 +13,7 @@
  --}}
 <td>
     <div class="pull-left result-source" title="{{id}}">{{id}}</div>
-    <div class="pull-right">
+    <a href="#" class="pull-right hit-count-text">
     {{#is state "SUCCEEDED"}}
         {{results}}<span class="hit-count">/{{hits}}</span> <span class="status-time">
         {{#lt elapsed 60000}}
@@ -37,5 +37,5 @@
             {{/is}}
         {{/is}}
     {{/is}}
-    </div>
+    </a>
 </td>

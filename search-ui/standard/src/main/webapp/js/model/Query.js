@@ -12,6 +12,7 @@
 /*global define, setInterval, clearInterval*/
 
 define([
+        'jquery',
         'backbone',
         'underscore',
         'properties',
@@ -21,7 +22,7 @@ define([
         'js/model/Filter',
         'backboneassociations'
     ],
-    function (Backbone, _, properties, moment, Metacard, usngs, Filter) {
+    function ($, Backbone, _, properties, moment, Metacard, usngs, Filter) {
         "use strict";
         var Query = {};
 
@@ -179,14 +180,7 @@ define([
                     }));
                 }
 
-                if (_.isEmpty(filters)) {
-                    filters.push(new Filter.Model({
-                        fieldName: 'anyText',
-                        fieldType: 'string',
-                        fieldOperator: 'contains',
-                        stringValue1: '*'
-                    }));
-                }
+
 
                 // type
                 var types = this.get('type');
@@ -196,8 +190,8 @@ define([
                         filters.push(new Filter.Model({
                             fieldName: 'metadata-content-type',
                             fieldType: 'string',
-                            fieldOperator: 'equals',
-                            stringValue1: type
+                            fieldOperator: 'contains',
+                            stringValue1: $(type).text()  // TODO fix this issue.  for some reason this is coming back as html from the server.
                         }));
                     }, this);
                 }
@@ -238,18 +232,30 @@ define([
                     }));
                 }
 
+                // if no filters so far, lets create a global search one.
+                if (_.isEmpty(filters)) {
+                    filters.push(new Filter.Model({
+                        fieldName: 'anyText',
+                        fieldType: 'string',
+                        fieldOperator: 'contains',
+                        stringValue1: '*'
+                    }));
+                }
+
+
+
                 var sources = this.get('src').split(',');
                 if(sources){
                     console.log(sources);
 
-                    _.each(sources, function(source){
+//                    _.each(sources, function(source){
                         filters.push(new Filter.Model({
                             fieldName: 'source-id',
                             fieldType: 'string',
                             fieldOperator: 'equals',
-                            stringValue1: source
+                            stringValue1: this.get('src')
                         }));
-                    });
+//                    });
                 }
 
                 return filters;

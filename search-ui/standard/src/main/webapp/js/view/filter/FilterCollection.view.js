@@ -49,7 +49,6 @@ define([
                 } else {
                     return;  // lets just exit.
                 }
-                console.log(this.collection);
 
             },
             removePressed: function(modelToRemove){

@@ -30,7 +30,7 @@ define([
         var FacetCollectionView = Marionette.CompositeView.extend({
             itemView: FacetItemView,
             template: 'facetCollectionTemplate',
-            itemViewContainer: '.facet-items',
+            itemViewContainer: 'tbody',
             initialize: function(options){
                 var facetPairs = _.pairs(options.facetCounts);
                 var flattenedFacets = _.map(facetPairs, function(pair){
@@ -53,8 +53,14 @@ define([
 
                 });
                 flattenedFacets = _.compact(flattenedFacets);
-                console.log(flattenedFacets);
-                this.collection = new Backbone.Collection(flattenedFacets);
+                this.collection = new Backbone.Collection(flattenedFacets,{
+                    comparator: function(model){
+                        if(model.get('fieldName') === 'source-id'){
+                            return 1; // source is always first.
+                        }
+                        return 2;
+                    }
+                });
             }
         });
 
