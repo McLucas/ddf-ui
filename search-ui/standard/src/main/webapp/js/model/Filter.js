@@ -120,14 +120,11 @@ define([
             }
         },
         anyGeo: {
-            'equals': function(filter){
-                return filter.get('geoValue1');
-            },
             'contains': function(filter) {
-                return filter.get('geoValue1');
+                return 'DWITHIN(anyGeo, ' + filter.get('geoValue1') + ', meters)';
             },
-            'intersect': function(filter) {
-                return filter.get('geoValue1');
+            'intersects': function(filter) {
+                return 'INTERSECTS(anyGeo, ' + filter.get('geoValue1') + ')';
             }
         }
     };
@@ -178,7 +175,6 @@ define([
                 }
                 return true;
             });
-            console.log(unfinished);
             this.remove(unfinished);
         }
     });

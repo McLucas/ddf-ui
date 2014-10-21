@@ -222,8 +222,9 @@ define([
                     filters.push(new Filter.Model({
                         fieldName: 'anyGeo',
                         fieldType: 'anyGeo',
-                        fieldOperator: 'contains',
-                        geoValue1: 'INTERSECTS(anyGeo, ' + bbox + ')'
+                        fieldOperator: 'intersects',
+                        //geoValue1: 'INTERSECTS(anyGeo, ' + bbox + ')'
+                        geoValue1: bbox
                     }));
 
                 } else if (lat && lon && radius) {
@@ -232,7 +233,8 @@ define([
                         fieldName: 'anyGeo',
                         fieldType: 'anyGeo',
                         fieldOperator: 'contains',
-                        geoValue1: 'DWITHIN(anyGeo, ' + point + ', ' + radius + ', meters)'
+//                        geoValue1: 'DWITHIN(anyGeo, ' + point + ', ' + radius + ', meters)'
+                        geoValue1: point + ', ' + radius
                     }));
                 }
 
