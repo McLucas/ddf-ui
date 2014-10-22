@@ -222,7 +222,7 @@ define([
             initFromFilter: function(){
                 var showFilter = wreqr.reqres.request('getShowFilterFlag');
                 if(showFilter){
-                    this.toggleStatus();
+                    this.toggleStatus();  // this should enable it.
                 }
             },
             refreshResults: function() {

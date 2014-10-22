@@ -404,6 +404,7 @@ define([
                 }
                 this.set({result: undefined});
                 this.filters.reset(this.toFilters());
+                this.trigger('searchCleared');
             },
 
 
@@ -413,17 +414,14 @@ define([
                     this.filters.reset(this.toFilters()); // init filters from search parameters.
                 }
                 // this overrides the cql generation with the filters cql.
-                // TODO: if this gets merged in, we need to make filters for geospacial stuff, sources, content-types
                 data.cql = this.filters.toCQL();
 
-
+                // lets handle the source-id filters since they are not included in the cql.
                 var sourceFilters = this.filters.where({fieldName: 'source-id'});
-
                 var sources = [];
                 _.each(sourceFilters, function(sourceFilter){
                     sources.push(sourceFilter.get('stringValue1'));
                 });
-
                 data.src = sources.join(',');
 
                 console.log(data);
