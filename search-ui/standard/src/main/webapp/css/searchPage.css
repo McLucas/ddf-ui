@@ -266,10 +266,10 @@ body {
     cursor: pointer;
 }
 
-#status-table td {
-    padding-top: 3px;
-    padding-bottom: 3px;
-}
+/*#status-table td {*/
+    /*padding-top: 3px;*/
+    /*padding-bottom: 3px;*/
+/*}*/
 
 .result-status .table {
     margin-bottom: 15px;

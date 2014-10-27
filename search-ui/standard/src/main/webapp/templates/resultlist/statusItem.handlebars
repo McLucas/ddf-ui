@@ -13,19 +13,24 @@
  --}}
 <td>
     <div class="pull-left result-source" title="{{id}}">{{id}}</div>
-    <a href="#" class="pull-right hit-count-text">
+    <div class="pull-right">
     {{#is state "SUCCEEDED"}}
-        {{results}}<span class="hit-count">/{{hits}}</span> <span class="status-time">
-        {{#lt elapsed 60000}}
-            {{#lt elapsed 1000}}
-                ({{duration elapsed milliseconds=null}}ms)
+        <a href="#" class="hit-count-text">
+            {{results}}<span class="hit-count">/{{hits}}</span> <span class="status-time">
+            {{#lt elapsed 60000}}
+                {{#lt elapsed 1000}}
+                    ({{duration elapsed milliseconds=null}}ms)
+                {{else}}
+                    ({{duration elapsed seconds=null}}s)
+                {{/lt}}
             {{else}}
-                ({{duration elapsed seconds=null}}s)
+                ({{duration elapsed minutes=null}}m)
             {{/lt}}
-        {{else}}
-            ({{duration elapsed minutes=null}}m)
-        {{/lt}}
-        </span>
+            </span>
+        </a>
+        <i class="fa fa-times remove"></i>
+
+
     {{else}}
         {{#is state "FAILED"}}
             <span class="label label-important">failed</span>
@@ -37,5 +42,5 @@
             {{/is}}
         {{/is}}
     {{/is}}
-    </a>
+    </div>
 </td>

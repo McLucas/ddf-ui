@@ -13,6 +13,7 @@
 
 define([
         'marionette',
+        'backbone',
         'underscore',
         'icanhaz',
         'direction',
@@ -28,7 +29,7 @@ define([
         'text!templates/resultlist/status.handlebars',
         'properties'
     ],
-    function (Marionette, _, ich, dir, Spinner, spinnerConfig, wreqr, FilterLayoutView,resultListItemTemplate, resultListTemplate, countLowTemplate, countHighTemplate, statusItemTemplate, statusTemplate, properties) {
+    function (Marionette, Backbone, _, ich, dir, Spinner, spinnerConfig, wreqr, FilterLayoutView,resultListItemTemplate, resultListTemplate, countLowTemplate, countHighTemplate, statusItemTemplate, statusTemplate, properties) {
         "use strict";
 
         var List = {};
@@ -179,7 +180,8 @@ define([
 
         List.StatusRow = Marionette.ItemView.extend({
             events: {
-                'click .hit-count-text':'hitCountClicked'
+                'click .hit-count-text':'hitCountClicked',
+                'click .remove':'removedClicked'
             },
             tagName: 'tr',
             template: 'statusItemTemplate',
@@ -198,21 +200,47 @@ define([
                     fieldName: fieldName
                 });
 
+            },
+            removedClicked: function(){
+                wreqr.vent.trigger('requestSourceFilterRemoved', this.model.get('id'));
             }
         });
     
         List.StatusTable = Marionette.CompositeView.extend({
             template: 'statusTemplate',
             itemView : List.StatusRow,
-            itemViewContainer: 'tbody',
+            itemViewContainer: '.included tbody',
             events: {
                 'click #status-icon': 'toggleStatus',
-                'click #refresh-icon': 'refreshResults'
+                'click #refresh-icon': 'refreshResults',
+                'click .add': 'addSourceClicked'
             },
             initialize: function() {
+
+                var includedSourceIds = this.collection.pluck('id');
+                var excludedSources = new Backbone.Collection(this.options.sources.filter(function(source){
+                    return !_.contains(includedSourceIds, source.get('id'));
+                })).toJSON();
+
+                _.each(excludedSources, function(excludedSource){
+                    excludedSource.isExcluded = true;
+                });
+
+
                 if (this.collection) {
                     this.listenTo(this.collection, 'change', this.setRefreshIcon);
                 }
+            },
+            serializeData: function(){
+                var includedSourceIds = this.collection.pluck('id');
+                var excludedSources = new Backbone.Collection(this.options.sources.filter(function(source){
+                    return !_.contains(includedSourceIds, source.get('id'));
+                })).toJSON();
+
+
+                return {
+                    excludedSources: excludedSources
+                };
             },
             toggleStatus: function() {
                 this.$('#status-table').toggleClass('shown hidden');
@@ -254,6 +282,11 @@ define([
                     }
                 });
                 return working;
+            },
+            addSourceClicked: function(evt){
+                var sourceIdToAdd = this.$(evt.currentTarget).attr('data-source-id');
+                this.collection.parents[0].parents[0].filters.addSourceId(sourceIdToAdd);
+                this.collection.parents[0].parents[0].startSearch();
             }
         });
     
@@ -296,19 +329,23 @@ define([
                 this.listenTo(wreqr.vent, 'search:resultssave', this.saveSelectedRecords);
             },
             onRender: function () {
-                this.listRegion.show(new List.MetacardTable({
-                    collection: this.model.get("results")
+                var view = this;
+                view.listRegion.show(new List.MetacardTable({
+                    collection: view.model.get("results")
                 }));
-                if(this.model.get("status")) {
-                    this.statusRegion.show(new List.StatusTable({
-                        collection: this.model.get("status")
-                    }));
+                if(view.model.get("status")) {
+                    wreqr.reqres.request('getSourcePromise').then(function(sources){
+                        view.statusRegion.show(new List.StatusTable({
+                            collection: view.model.get("status"),
+                            sources: sources
+                        }));
+                    }).done();
                 }
-                this.countRegion.show(new List.CountView({
-                    model: this.model
+                view.countRegion.show(new List.CountView({
+                    model: view.model
                 }));
-                this.filterRegion.show(new FilterLayoutView({
-                    model: this.model
+                view.filterRegion.show(new FilterLayoutView({
+                    model: view.model
                 }));
             },
             onShow: function(){

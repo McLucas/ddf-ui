@@ -176,6 +176,53 @@ define([
                 return true;
             });
             this.remove(unfinished);
+        },
+        removeSourceFromFilters: function(sourceId){
+            console.log('removeSourceFromFilters');
+            var existingFilters = this.where({fieldName: 'source-id'});
+            var newSourceIds = [];
+            _.each(existingFilters, function(existingFilter){
+                var existingFilterString = existingFilter.get('stringValue1');
+                if(existingFilterString && existingFilterString !== ''){
+                    var parsedIds = existingFilterString.split(',');
+                    _.each(parsedIds, function(parsedId){
+                        console.log(parsedId);
+                        if(parsedId !== sourceId){
+                            newSourceIds.push(parsedId);
+                        }
+                    });
+                }
+            });
+            this.remove(existingFilters);
+            this.add(new Filter.Model({
+                fieldName: 'source-id',
+                fieldType: 'string',
+                stringValue1: newSourceIds.join(',')
+            }));
+        },
+        addSourceId: function(sourceId){
+            console.log('removeSourceFromFilters');
+            var existingFilters = this.where({fieldName: 'source-id'});
+            var newSourceIds = [];
+            _.each(existingFilters, function(existingFilter){
+                var existingFilterString = existingFilter.get('stringValue1');
+                if(existingFilterString && existingFilterString !== ''){
+                    var parsedIds = existingFilterString.split(',');
+                    _.each(parsedIds, function(parsedId){
+                        console.log(parsedId);
+                        if(parsedId !== sourceId){
+                            newSourceIds.push(parsedId);
+                        }
+                    });
+                }
+            });
+            newSourceIds.push(sourceId);
+            this.remove(existingFilters);
+            this.add(new Filter.Model({
+                fieldName: 'source-id',
+                fieldType: 'string',
+                stringValue1: newSourceIds.join(',')
+            }));
         }
     });
 

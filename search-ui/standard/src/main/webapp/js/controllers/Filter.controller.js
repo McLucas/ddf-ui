@@ -15,8 +15,9 @@ define([
     'underscore',
     'marionette',
     'wreqr',
-    'moment'
-], function ($, _, Marionette, wreqr, moment) {
+    'moment',
+    'js/model/source'
+], function ($, _, Marionette, wreqr, moment, Source) {
         'use strict';
         var FilterController;
 
@@ -32,6 +33,7 @@ define([
                 wreqr.reqres.setHandler('getFields', this.getFields);
                 wreqr.reqres.setHandler('getFacetCounts', this.getFacetCounts);
                 wreqr.reqres.setHandler('getShowFilterFlag', this.getShowFilterFlag);
+                wreqr.reqres.setHandler('getSourcePromise', this.getSourcePromise);
                 this.listenTo(wreqr.vent,'processSearch', this.processSearch);
                 this.listenTo(wreqr.vent,'filterFlagChanged', this.filterFlagChanged);
 
@@ -51,6 +53,11 @@ define([
 
             filterFlagChanged: function(isFilterShown){
                 this.showFilterFlag = isFilterShown;
+            },
+
+            getSourcePromise: function(){
+                var sources = new Source.Collection();
+                return sources.fetchPromise();
             },
 
             processSearch: function(searchToProcess){
@@ -109,6 +116,7 @@ define([
                 _.each(newFields, function(newField){
                     var currentFieldNames = _.pluck(that.fields, 'name');
                     if(!_.contains(currentFieldNames, newField.name)){
+                        console.log('adding:' + newField.name);
                         that.fields.push(newField);
                     }
                 });

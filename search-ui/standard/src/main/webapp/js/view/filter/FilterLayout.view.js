@@ -54,6 +54,7 @@ define([
                 }
                 this.listenTo(wreqr.vent, 'toggleFilterMenu', this.toggleFilterVisibility);
                 this.listenTo(wreqr.vent, 'facetSelected', this.addFacet);
+                this.listenTo(wreqr.vent, 'requestSourceFilterRemoved', this.requestSourceFilterRemoved);
 
                 wreqr.vent.trigger('processSearch', this.model);
             },
@@ -108,6 +109,11 @@ define([
                     fieldOperator: 'contains',
                     stringValue1: facet.fieldValue
                 }));
+                this.collection.trimUnfinishedFilters();
+                this.queryObject.startSearch();
+            },
+            requestSourceFilterRemoved: function(sourceId){
+                this.collection.removeSourceFromFilters(sourceId);
                 this.collection.trimUnfinishedFilters();
                 this.queryObject.startSearch();
             }
