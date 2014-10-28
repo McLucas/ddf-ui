@@ -30,9 +30,24 @@ define([
             template: 'facetItemTemplate',
             tagName: 'tr',
             events: {
-                'click .field-value': 'fieldValueClicked'
+                'click .remove': 'removeClicked',
+                'click .add': 'addClicked'
             },
-            fieldValueClicked: function(evt){
+            removeClicked: function(evt){
+                var element = this.$(evt.currentTarget);
+                var valueCount = element.attr('data-value-count');
+                var fieldValue = element.attr('data-field-value');
+                var fieldName = element.attr('data-field-name');
+
+                wreqr.vent.trigger('facetDeSelected', {
+                    valueCount: valueCount,
+                    fieldValue: fieldValue,
+                    fieldName: fieldName
+                });
+
+                return false;
+            },
+            addClicked: function(evt){
                 var element = this.$(evt.currentTarget);
                 var valueCount = element.attr('data-value-count');
                 var fieldValue = element.attr('data-field-value');
@@ -46,6 +61,7 @@ define([
 
                 return false;
             }
+
         });
 
         return FacetItemView;

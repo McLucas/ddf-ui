@@ -251,6 +251,7 @@ define([
                 var showFilter = wreqr.reqres.request('getShowFilterFlag');
                 if(showFilter){
                     this.toggleStatus();  // this should enable it.
+                    wreqr.vent.trigger('toggleFilterMenu', true);
                 }
             },
             refreshResults: function() {

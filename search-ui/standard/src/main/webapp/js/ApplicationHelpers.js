@@ -26,7 +26,6 @@ define([
      * @returns {Q Promise}
      */
     var fetchPromise = function(options){
-        console.log('fetchPromise');
         var deferred = Q.defer(),
             modelOrCollection = this;
         options = options ? _.clone(options) : {};

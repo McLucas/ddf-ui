@@ -125,30 +125,22 @@ define([
             registerFacetCounts: function(facetCounts){
                 var controller = this;
 
-                var sources = wreqr.reqres.request("workspace:getsources");
+//                var sources = wreqr.reqres.request("workspace:getsources");
                 var contentTypes = wreqr.reqres.request("workspace:gettypes");
 
-                var sourceIds = sources.pluck('id');
+//                var sourceIds = sources.pluck('id');
                 var contentTypeIds = contentTypes.pluck('name');
 
 
-                controller.facetCounts = _.pick(facetCounts,['metadata-content-type','metacard-type']);
+
+                controller.facetCounts = _.pick(facetCounts,['metadata-content-type']);
 
                 controller.facetCounts = _.extend({
                     'metadata-content-type': {}
                 }, controller.facetCounts);
-
                 var keys = _.keys(controller.facetCounts);
                  _.each(keys, function(key){
-                    console.log(key);
-                    if(key === 'source-id'){
-                        _.each(sourceIds, function(sourceId){
-                            if(!_.has(controller.facetCounts[key], sourceId)){
-                                controller.facetCounts[key][sourceId] = 0;
-                            }
-                        });
-
-                    } else if(key === 'metadata-content-type'){
+                    if(key === 'metadata-content-type'){
                         _.each(contentTypeIds, function(contentTypeId){
                             if(!_.has(controller.facetCounts[key], contentTypeId)){
                                 controller.facetCounts[key][contentTypeId] = 0;
@@ -156,7 +148,7 @@ define([
                         });
                     }
                 });
-
+//
             }
 
         });

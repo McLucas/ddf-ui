@@ -9,7 +9,7 @@
  * <http://www.gnu.org/licenses/lgpl.html>.
  *
  **/
-/*global define*/
+/*global define */
 
 define([
     'jquery',
@@ -30,26 +30,31 @@ define([
         var FacetCollectionView = Marionette.CompositeView.extend({
             itemView: FacetItemView,
             template: 'facetCollectionTemplate',
-            itemViewContainer: 'tbody',
+            itemViewContainer: '.facet-items',
             initialize: function(options){
+
+                var queryObject = this.model.parents[0];
+                var filteredContentTypeIds = queryObject.filters.getContentTypes();
+                console.log(filteredContentTypeIds);
                 var facetPairs = _.pairs(options.facetCounts);
                 var flattenedFacets = _.map(facetPairs, function(pair){
                     var pairsMapped = _.map(_.pairs(pair[1]), function(innerPair){
                         return {
                             value: innerPair[0],
-                            count: innerPair[1]
+                            count: innerPair[1],
+                            enabled: _.contains(filteredContentTypeIds, innerPair[0])
                         };
                     });
 
                     pairsMapped = _.compact(pairsMapped);
 
-                    if(pairsMapped.length > 0){
+//                    if(pairsMapped.length > 0){
                         return new Backbone.Model({
                             fieldName: pair[0],
                             values: pairsMapped
                         });
-                    }
-                    return false;
+//                    }
+                    //return false;
 
                 });
                 flattenedFacets = _.compact(flattenedFacets);
@@ -62,6 +67,7 @@ define([
                     }
                 });
             }
+
         });
 
         return FacetCollectionView;

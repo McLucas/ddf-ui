@@ -15,7 +15,7 @@
 <i id="refresh-icon" class="fa fa-circle-o-notch fa-spin result-refresh-icon"></i>
 <div id="status-table" class="hidden">
     <div class="padding-3 nav-header">
-        Federated Sites
+        Sources
     </div>
     <table class="table included table-striped resultTable vertical-shrink-rows">
         <tbody></tbody>
@@ -26,12 +26,14 @@
         <table class="table excluded table-striped resultTable vertical-shrink-rows attached">
             <tbody>
                 {{#each excludedSources}}
+                <tr>
                     <td>
-                        <div class="pull-left result-source" title="{{id}}">{{id}}</div>
-                        <div class="pull-right">
-                            <i class="fa fa-plus add" data-source-id="{{id}}"></i>
+                        <div class="pull-left margin-right-6">
+                            <input type="checkbox" class="add" data-source-id="{{id}}"/>
                         </div>
+                        <div class="pull-left result-source" title="{{id}}">{{id}}</div>
                     </td>
+                </tr>
                 {{/each}}
             </tbody>
         </table>

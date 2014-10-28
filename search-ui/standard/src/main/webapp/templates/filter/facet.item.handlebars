@@ -1,37 +1,29 @@
-<td>
-    <div class="pull-left margin-right-6" title="{{fieldName}}">{{fieldName}}</div>
-        {{#each values}}
-            <div class="field-value pull-left margin-left-3" data-field-value="{{value}}" data-value-count="{{count}}" data-field-name="{{../fieldName}}"><a href="#">{{value}}({{count}})</a></div>
-        {{/each}}
+<div class="nav-header">
+    {{fieldName}}
+</div>
+<table class="table table-striped resultTable vertical-shrink-rows no-margin-bottom">
+    <tbody>
+    {{#each values}}
+        <tr>
+            <td>
+                <!--<div class="pull-left margin-right-6">-->
+                    <!--<input class="{{#is enabled true}} remove {{else}} add {{/is}}" type="checkbox"-->
+                        <!--{{#is enabled true}} checked="checked" {{/is}} data-field-value="{{value}}" data-value-count="{{count}}" data-field-name="{{../fieldName}}"/>-->
+                <!--</div>-->
+                <div class="pull-left" title="{{value}}">{{value}}</div>
+                <div class="field-value pull-right margin-left-3 {{#is enabled true}} remove {{else}} add {{/is}}" data-field-value="{{value}}" data-value-count="{{count}}" data-field-name="{{../fieldName}}"><a href="#">({{count}})</a></div>
+            </td>
+        </tr>
+    {{/each}}
+    {{#is values.length 0}}
+        <tr>
+            <td>
+                <div class="pull-right">No Matches</div>
+            </td>
+        </tr>
+    {{/is}}
+    </tbody>
+</table>
 
 
-        <!--{{#is state "SUCCEEDED"}}-->
-            <!--{{results}}<span class="hit-count">/{{hits}}</span> <span class="status-time">-->
-            <!--{{#lt elapsed 60000}}-->
-                <!--{{#lt elapsed 1000}}-->
-                    <!--({{duration elapsed milliseconds=null}}ms)-->
-                <!--{{else}}-->
-                    <!--({{duration elapsed seconds=null}}s)-->
-                <!--{{/lt}}-->
-            <!--{{else}}-->
-                <!--({{duration elapsed minutes=null}}m)-->
-            <!--{{/lt}}-->
-        <!--</span>-->
-        <!--{{else}}-->
-            <!--{{#is state "FAILED"}}-->
-                <!--<span class="label label-important">failed</span>-->
-            <!--{{else}}-->
-                <!--{{#is canceled true}}-->
-                    <!--<span class="label label-warning">canceled</span>-->
-                <!--{{else}}-->
-                    <!--<i class="fa fa-circle-o-notch fa-spin"></i>-->
-                <!--{{/is}}-->
-            <!--{{/is}}-->
-        <!--{{/is}}-->
-</td>
 
-
-<!--<div class="field-name"><b>{{fieldName}}</b></div>-->
-<!--{{#each values}}-->
-    <!--<div class="indent-12 field-value" data-field-value="{{value}}" data-value-count="{{count}}" data-field-name="{{../fieldName}}"><a href="#">{{value}} ({{count}})</a></div>-->
-<!--{{/each}}-->

@@ -12,6 +12,16 @@
  **/
  --}}
 <td>
+    <div class="pull-left margin-right-6">
+
+
+        {{#is state "SUCCEEDED"}}
+            <input class="remove" type="checkbox" checked="checked"/>
+        {{else}}
+            <input class="disabled" type="checkbox" checked="checked" read-only/>
+        {{/is}}
+
+    </div>
     <div class="pull-left result-source" title="{{id}}">{{id}}</div>
     <div class="pull-right">
     {{#is state "SUCCEEDED"}}
@@ -28,9 +38,6 @@
             {{/lt}}
             </span>
         </a>
-        <i class="fa fa-times remove"></i>
-
-
     {{else}}
         {{#is state "FAILED"}}
             <span class="label label-important">failed</span>

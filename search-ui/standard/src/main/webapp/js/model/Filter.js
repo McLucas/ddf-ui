@@ -88,7 +88,17 @@ define([
                 throw new Error("Not implemented yet." + filter);
             },
             'contains': function(filter){
-                return Filter.CQLFactory.formatFieldName(filter.get('fieldName')) + ' ILIKE ' + Filter.CQLFactory.getValue(filter.get('stringValue1'));
+                if(filter.get('fieldName') === 'metacard-content-type'){
+                    var split = filter.get('stringValue1').split(',');
+                    var joinArray = [];
+                    _.each(split, function(subContentType){
+                        ' ( ' + joinArray.push(Filter.CQLFactory.formatFieldName(filter.get('fieldName')) + ' ILIKE ' + Filter.CQLFactory.getValue(filter.get('stringValue1'))) + ' ) ';
+                    });
+                    return joinArray.join(' OR ');
+                } else {
+                    return Filter.CQLFactory.formatFieldName(filter.get('fieldName')) + ' ILIKE ' + Filter.CQLFactory.getValue(filter.get('stringValue1'));
+                }
+
             }
         },
         date: {
@@ -177,8 +187,75 @@ define([
             });
             this.remove(unfinished);
         },
+
+
+        getContentTypes: function(){
+            var newSourceIds = [];
+            var existingFilters = this.where({fieldName: 'metacard-content-type'});
+            _.each(existingFilters, function(existingFilter){
+                var existingFilterString = existingFilter.get('stringValue1');
+                if(existingFilterString && existingFilterString !== ''){
+                    var parsedIds = existingFilterString.split(',');
+                    _.each(parsedIds, function(parsedId){
+                        newSourceIds.push(parsedId);
+                    });
+                }
+            });
+            return _.uniq(newSourceIds);
+        },
+
+        addContentTypeToFilters: function(sourceId){
+            var existingFilters = this.where({fieldName: 'metacard-content-type'});
+            var newSourceIds = [];
+            _.each(existingFilters, function(existingFilter){
+                var existingFilterString = existingFilter.get('stringValue1');
+                if(existingFilterString && existingFilterString !== ''){
+                    var parsedIds = existingFilterString.split(',');
+                    _.each(parsedIds, function(parsedId){
+                        console.log(parsedId);
+                        if(parsedId !== sourceId){
+                            newSourceIds.push(parsedId);
+                        }
+                    });
+                }
+            });
+            newSourceIds.push(sourceId);
+            console.log('adding');
+            console.log(newSourceIds);
+            this.remove(existingFilters);
+            this.add(new Filter.Model({
+                fieldName: 'metacard-content-type',
+                fieldType: 'string',
+                fieldOperator: 'contains',
+                stringValue1: newSourceIds.join(',')
+            }));
+        },
+        removeContentTypeFromFilters: function(sourceId){
+            var existingFilters = this.where({fieldName: 'metacard-content-type'});
+            var newSourceIds = [];
+            _.each(existingFilters, function(existingFilter){
+                var existingFilterString = existingFilter.get('stringValue1');
+                if(existingFilterString && existingFilterString !== ''){
+                    var parsedIds = existingFilterString.split(',');
+                    _.each(parsedIds, function(parsedId){
+                        console.log(parsedId);
+                        if(parsedId !== sourceId){
+                            newSourceIds.push(parsedId);
+                        }
+                    });
+                }
+            });
+            this.remove(existingFilters);
+            this.add(new Filter.Model({
+                fieldName: 'metacard-content-type',
+                fieldType: 'string',
+                fieldOperator: 'contains',
+                stringValue1: newSourceIds.join(',')
+            }));
+        },
+
+
         removeSourceFromFilters: function(sourceId){
-            console.log('removeSourceFromFilters');
             var existingFilters = this.where({fieldName: 'source-id'});
             var newSourceIds = [];
             _.each(existingFilters, function(existingFilter){
@@ -197,11 +274,11 @@ define([
             this.add(new Filter.Model({
                 fieldName: 'source-id',
                 fieldType: 'string',
+                fieldOperator: 'contains',
                 stringValue1: newSourceIds.join(',')
             }));
         },
         addSourceId: function(sourceId){
-            console.log('removeSourceFromFilters');
             var existingFilters = this.where({fieldName: 'source-id'});
             var newSourceIds = [];
             _.each(existingFilters, function(existingFilter){
@@ -221,6 +298,7 @@ define([
             this.add(new Filter.Model({
                 fieldName: 'source-id',
                 fieldType: 'string',
+                fieldOperator: 'contains',
                 stringValue1: newSourceIds.join(',')
             }));
         }
