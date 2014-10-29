@@ -94,7 +94,7 @@ define([
                             // lets increment the facet value.  If none exist, create one with value of 1.
                             var curValue = pair[1];
                             if(pair[0] === 'metadata-content-type'){
-                                var term = $(pair[1]).attr('term');  // TODO FIX THIS HACK once xml isn't coming back as the metacard-content-type.
+                                var term = $(pair[1]).attr('term');  // TODO FIX THIS HACK once xml isn't coming back as the metadata-content-type.
                                 if(term){
                                     curValue = term;
                                 }

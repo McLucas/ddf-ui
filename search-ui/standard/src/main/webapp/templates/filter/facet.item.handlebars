@@ -6,12 +6,12 @@
     {{#each values}}
         <tr>
             <td>
-                <!--<div class="pull-left margin-right-6">-->
-                    <!--<input class="{{#is enabled true}} remove-facet {{else}} add-facet {{/is}}" type="checkbox"-->
-                        <!--{{#is enabled true}} checked="checked" {{/is}} data-field-value="{{value}}" data-value-count="{{count}}" data-field-name="{{../fieldName}}"/>-->
-                <!--</div>-->
+                <div class="pull-left margin-right-6">
+                    <input class="{{#is isInFilter true}} remove-facet {{else}} add-facet {{/is}}" type="checkbox"
+                        {{#is isInFilter true}} checked="checked" {{/is}} data-field-value="{{value}}" data-value-count="{{count}}" data-field-name="{{../fieldName}}"/>
+                </div>
                 <div class="pull-left" title="{{value}}">{{value}}</div>
-                <div class="field-value pull-right margin-left-3 {{#is enabled true}} remove-facet {{else}} add-facet {{/is}}" data-field-value="{{value}}" data-value-count="{{count}}" data-field-name="{{../fieldName}}"><a href="#">({{count}})</a></div>
+                <div class="field-value pull-right margin-left-3 {{#is isInFilter true}} remove-facet {{else}} add-facet {{/is}}" data-field-value="{{value}}" data-value-count="{{count}}" data-field-name="{{../fieldName}}"><a href="#">({{count}})</a></div>
             </td>
         </tr>
     {{/each}}

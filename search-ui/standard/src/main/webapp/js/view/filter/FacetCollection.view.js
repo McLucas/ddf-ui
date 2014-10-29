@@ -38,14 +38,13 @@ define([
                     return; // just quit.
                 }
                 var filteredContentTypeIds = queryObject.filters.getContentTypes();
-                console.log(filteredContentTypeIds);
                 var facetPairs = _.pairs(options.facetCounts);
                 var flattenedFacets = _.map(facetPairs, function(pair){
                     var pairsMapped = _.map(_.pairs(pair[1]), function(innerPair){
                         return {
                             value: innerPair[0],
                             count: innerPair[1],
-                            enabled: _.contains(filteredContentTypeIds, innerPair[0])
+                            isInFilter: _.contains(filteredContentTypeIds, innerPair[0])
                         };
                     });
 

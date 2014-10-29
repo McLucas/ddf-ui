@@ -88,7 +88,7 @@ define([
                 throw new Error("Not implemented yet." + filter);
             },
             'contains': function(filter){
-                if(filter.get('fieldName') === 'metacard-content-type'){
+                if(filter.get('fieldName') === 'metadata-content-type'){
                     var split = filter.get('stringValue1').split(',');
                     var joinArray = [];
                     _.each(split, function(subContentType){
@@ -191,7 +191,7 @@ define([
 
         getContentTypes: function(){
             var newSourceIds = [];
-            var existingFilters = this.where({fieldName: 'metacard-content-type'});
+            var existingFilters = this.where({fieldName: 'metadata-content-type'});
             _.each(existingFilters, function(existingFilter){
                 var existingFilterString = existingFilter.get('stringValue1');
                 if(existingFilterString && existingFilterString !== ''){
@@ -205,14 +205,13 @@ define([
         },
 
         addContentTypeToFilters: function(sourceId){
-            var existingFilters = this.where({fieldName: 'metacard-content-type'});
+            var existingFilters = this.where({fieldName: 'metadata-content-type'});
             var newSourceIds = [];
             _.each(existingFilters, function(existingFilter){
                 var existingFilterString = existingFilter.get('stringValue1');
                 if(existingFilterString && existingFilterString !== ''){
                     var parsedIds = existingFilterString.split(',');
                     _.each(parsedIds, function(parsedId){
-                        console.log(parsedId);
                         if(parsedId !== sourceId){
                             newSourceIds.push(parsedId);
                         }
@@ -220,18 +219,16 @@ define([
                 }
             });
             newSourceIds.push(sourceId);
-            console.log('adding');
-            console.log(newSourceIds);
             this.remove(existingFilters);
             this.add(new Filter.Model({
-                fieldName: 'metacard-content-type',
+                fieldName: 'metadata-content-type',
                 fieldType: 'string',
                 fieldOperator: 'contains',
                 stringValue1: newSourceIds.join(',')
             }));
         },
         removeContentTypeFromFilters: function(sourceId){
-            var existingFilters = this.where({fieldName: 'metacard-content-type'});
+            var existingFilters = this.where({fieldName: 'metadata-content-type'});
             var newSourceIds = [];
             _.each(existingFilters, function(existingFilter){
                 var existingFilterString = existingFilter.get('stringValue1');
@@ -247,7 +244,7 @@ define([
             });
             this.remove(existingFilters);
             this.add(new Filter.Model({
-                fieldName: 'metacard-content-type',
+                fieldName: 'metadata-content-type',
                 fieldType: 'string',
                 fieldOperator: 'contains',
                 stringValue1: newSourceIds.join(',')

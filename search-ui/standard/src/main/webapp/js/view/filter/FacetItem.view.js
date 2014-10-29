@@ -33,6 +33,9 @@ define([
                 'click .remove-facet': 'removeClicked',
                 'click .add-facet': 'addClicked'
             },
+            initialize: function(){
+                console.log(this.model.toJSON());
+            },
             removeClicked: function(evt){
                 console.log('remove clicked');
                 var element = this.$(evt.currentTarget);

@@ -54,7 +54,7 @@ define([
                 }
                 this.listenTo(wreqr.vent, 'toggleFilterMenu', this.toggleFilterVisibility);
                 this.listenTo(wreqr.vent, 'facetSelected', this.addFacet);
-                this.listenTo(wreqr.vent, 'facetDeSelected', this.addFacet);  // todo fix this.
+                this.listenTo(wreqr.vent, 'facetDeSelected', this.removeFacet);
                 this.listenTo(wreqr.vent, 'requestSourceFilterRemoved', this.requestSourceFilterRemoved);
 
                 wreqr.vent.trigger('processSearch', this.model);
@@ -104,21 +104,43 @@ define([
                 //this.collection.addContentTypeToFilters(facet.fieldValue); // hard coding to content type for right now.
 
                 // lets remove any filters first.
-                var existingFilters = this.collection.where({fieldName: facet.fieldName});
-                this.collection.remove(existingFilters);
 
-                this.collection.add(new Filter.Model({
-                    fieldName: facet.fieldName,
-                    fieldType: 'string', // TODO not all facets will support equals and strings
-                    fieldOperator: 'contains',
-                    stringValue1: facet.fieldValue
-                }));
+
+                if(facet.fieldName === 'metadata-content-type') {
+                    this.collection.addContentTypeToFilters(facet.fieldValue); // hard coding to content type for right now.
+                } else if(facet.fieldName === 'source-id') {
+                    this.collection.addSourceToFilters(facet.fieldValue); // hard coding to content type for right now.
+                } else {
+                    debugger;
+                    return;
+                }
+
+//                var existingFilters = this.collection.where({fieldName: facet.fieldName});
+//                this.collection.remove(existingFilters);
+//
+//                this.collection.add(new Filter.Model({
+//                    fieldName: facet.fieldName,
+//                    fieldType: 'string', // TODO not all facets will support equals and strings
+//                    fieldOperator: 'contains',
+//                    stringValue1: facet.fieldValue
+//                }));
                 this.collection.trimUnfinishedFilters();
                 this.queryObject.startSearch();
             },
             removeFacet: function(facet){
 
-                this.collection.removeContentTypeFromFilters(facet.fieldValue); // hard coding to content type for right now.
+
+
+                if(facet.fieldName === 'metadata-content-type') {
+                    this.collection.removeContentTypeFromFilters(facet.fieldValue); // hard coding to content type for right now.
+                } else if(facet.fieldName === 'source-id') {
+                    this.collection.removeSourcFromFilters(facet.fieldValue); // hard coding to content type for right now.
+                } else {
+                    debugger;
+                    return;
+                }
+
+//                this.collection.removeContentTypeFromFilters(facet.fieldValue); // hard coding to content type for right now.
 
                 // lets remove any filters first.
 //                var existingFilters = this.collection.where({fieldName: facet.fieldName});
