@@ -194,7 +194,7 @@ define([
                 var fieldValue = this.model.get('id');
                 var fieldName = 'source-id';
 
-                wreqr.vent.trigger('facetSelected', {
+                wreqr.vent.trigger('facetFocused', {
                     valueCount: valueCount,
                     fieldValue: fieldValue,
                     fieldName: fieldName
@@ -202,7 +202,10 @@ define([
 
             },
             removedClicked: function(){
-                wreqr.vent.trigger('requestSourceFilterRemoved', this.model.get('id'));
+                wreqr.vent.trigger('facetDeSelected', {
+                    fieldName: properties.filters.SOURCE_ID,
+                    fieldValue: this.model.get('id')
+                });
             }
         });
     
@@ -286,8 +289,10 @@ define([
             },
             addSourceClicked: function(evt){
                 var sourceIdToAdd = this.$(evt.currentTarget).attr('data-source-id');
-                this.collection.parents[0].parents[0].filters.addSourceId(sourceIdToAdd);
-                this.collection.parents[0].parents[0].startSearch();
+                wreqr.vent.trigger('facetSelected', {
+                    fieldName: properties.filters.SOURCE_ID,
+                    fieldValue: sourceIdToAdd
+                });
             }
         });
     

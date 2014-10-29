@@ -20,9 +20,10 @@ define([
     'wreqr',
     'moment',
     './FacetItem.view',
-    'text!templates/filter/facet.collection.handlebars'
+    'text!templates/filter/facet.collection.handlebars',
+    'properties'
 ],
-    function ($, _, Marionette, Backbone, ich, wreqr, moment, FacetItemView, facetCollectionTemplate) {
+    function ($, _, Marionette, Backbone, ich, wreqr, moment, FacetItemView, facetCollectionTemplate, Properties) {
         "use strict";
 
         ich.addTemplate('facetCollectionTemplate', facetCollectionTemplate);
@@ -37,7 +38,7 @@ define([
                 if(queryObject === undefined){
                     return; // just quit.
                 }
-                var filteredContentTypeIds = queryObject.filters.getGroupedFilterValues('metadata-content-type');
+                var filteredContentTypeIds = queryObject.filters.getGroupedFilterValues(Properties.filters.METADATA_CONTENT_TYPE);
                 var facetPairs = _.pairs(options.facetCounts);
                 var flattenedFacets = _.map(facetPairs, function(pair){
                     var pairsMapped = _.map(_.pairs(pair[1]), function(innerPair){
@@ -60,14 +61,7 @@ define([
 
                 });
                 flattenedFacets = _.compact(flattenedFacets);
-                this.collection = new Backbone.Collection(flattenedFacets,{
-                    comparator: function(model){
-                        if(model.get('fieldName') === 'source-id'){
-                            return 1; // source is always first.
-                        }
-                        return 2;
-                    }
-                });
+                this.collection = new Backbone.Collection(flattenedFacets);
             }
 
         });

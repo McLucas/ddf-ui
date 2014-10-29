@@ -31,10 +31,8 @@ define([
             tagName: 'tr',
             events: {
                 'click .remove-facet': 'removeClicked',
-                'click .add-facet': 'addClicked'
-            },
-            initialize: function(){
-                console.log(this.model.toJSON());
+                'click .add-facet': 'addClicked',
+                'click .focus-facet': 'focusClicked'
             },
             removeClicked: function(evt){
                 console.log('remove clicked');
@@ -53,14 +51,27 @@ define([
             },
             addClicked: function(evt){
 
-                console.log('add clicked');
-
                 var element = this.$(evt.currentTarget);
                 var valueCount = element.attr('data-value-count');
                 var fieldValue = element.attr('data-field-value');
                 var fieldName = element.attr('data-field-name');
 
                 wreqr.vent.trigger('facetSelected', {
+                    valueCount: valueCount,
+                    fieldValue: fieldValue,
+                    fieldName: fieldName
+                });
+
+                return false;
+            },
+
+            focusClicked: function(evt){
+                var element = this.$(evt.currentTarget);
+                var valueCount = element.attr('data-value-count');
+                var fieldValue = element.attr('data-field-value');
+                var fieldName = element.attr('data-field-name');
+
+                wreqr.vent.trigger('facetFocused', {
                     valueCount: valueCount,
                     fieldValue: fieldValue,
                     fieldName: fieldName

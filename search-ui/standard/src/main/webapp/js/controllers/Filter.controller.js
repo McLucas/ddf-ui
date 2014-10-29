@@ -16,8 +16,9 @@ define([
     'marionette',
     'wreqr',
     'moment',
-    'js/model/source'
-], function ($, _, Marionette, wreqr, moment, Source) {
+    'js/model/source',
+    'properties'
+], function ($, _, Marionette, wreqr, moment, Source, Properties) {
         'use strict';
         var FilterController;
 
@@ -62,30 +63,42 @@ define([
 
             processSearch: function(searchToProcess){
                 // default all field
-                var array = [{name: 'anyText', type: 'string'},{name: 'anyGeo', type: 'anyGeo'}];
+                var array = [
+                    {name: 'anyText', type: 'string'},
+                    {name: 'anyGeo', type: 'anyGeo'}
+                ];
                 var facetCounts = {};
 
-                // time to iterate through the results and metacards to build our field list and facet list.
-                // TODO this should be refactored once
-                if(searchToProcess.get('results')){
-                    searchToProcess.get('results').each(function(item){
-                        var pairs = item.get('metacard').get('properties').pairs();
-                        _.each(pairs, function(pair){
-                            var currentFieldNames = _.pluck(array, 'name');
+                // process the types returned in this query.
+                if(searchToProcess.has('types')){
+                    var arrayOfFields = [];
+                    var types = searchToProcess.get('types');
+                    _.each(_.keys(types), function(type){
+                        var pairs = _.pairs(types[type]);
+                        var currentFieldNames = _.pluck(array, 'name');
 
+                        _.each(pairs, function(pair){
+
+                            console.log(pair[0]);
                             if(!_.contains(currentFieldNames, pair[0])){
                                 // doesn't exist.  lets add.
                                 var fieldObj = {
                                     name: pair[0],
-                                    type: typeof pair[1]
+                                    type: pair[1].toLowerCase()
                                 };
-
-                                // lets see if we need to convert type to a date.
-                                if(moment(pair[1]).isValid()){
-                                    fieldObj.type = 'date';
-                                }
                                 array.push(fieldObj);
                             }
+
+                        });
+                    });
+                }
+
+
+                // this give us our facet counts.
+                if(searchToProcess.get('results')){
+                    searchToProcess.get('results').each(function(item){
+                        var pairs = item.get('metacard').get('properties').pairs();
+                        _.each(pairs, function(pair){
 
                             // lets add the field-facet if it does not exist.
                             if(!_.has(facetCounts, pair[0])){
@@ -93,7 +106,7 @@ define([
                             }
                             // lets increment the facet value.  If none exist, create one with value of 1.
                             var curValue = pair[1];
-                            if(pair[0] === 'metadata-content-type'){
+                            if(pair[0] === Properties.filters.METADATA_CONTENT_TYPE){
                                 var term = $(pair[1]).attr('term');  // TODO FIX THIS HACK once xml isn't coming back as the metadata-content-type.
                                 if(term){
                                     curValue = term;
@@ -116,7 +129,6 @@ define([
                 _.each(newFields, function(newField){
                     var currentFieldNames = _.pluck(that.fields, 'name');
                     if(!_.contains(currentFieldNames, newField.name)){
-                        console.log('adding:' + newField.name);
                         that.fields.push(newField);
                     }
                 });
@@ -124,23 +136,15 @@ define([
 
             registerFacetCounts: function(facetCounts){
                 var controller = this;
-
-//                var sources = wreqr.reqres.request("workspace:getsources");
                 var contentTypes = wreqr.reqres.request("workspace:gettypes");
-
-//                var sourceIds = sources.pluck('id');
                 var contentTypeIds = contentTypes.pluck('name');
-
-
-
-                controller.facetCounts = _.pick(facetCounts,['metadata-content-type']);
-
-                controller.facetCounts = _.extend({
-                    'metadata-content-type': {}
-                }, controller.facetCounts);
+                controller.facetCounts = _.pick(facetCounts,[Properties.filters.METADATA_CONTENT_TYPE]);
+                var defaults = {};
+                defaults[Properties.filters.METADATA_CONTENT_TYPE] = {};
+                controller.facetCounts = _.extend(defaults, controller.facetCounts);
                 var keys = _.keys(controller.facetCounts);
                  _.each(keys, function(key){
-                    if(key === 'metadata-content-type'){
+                    if(key === Properties.filters.METADATA_CONTENT_TYPE){
                         _.each(contentTypeIds, function(contentTypeId){
                             if(!_.has(controller.facetCounts[key], contentTypeId)){
                                 controller.facetCounts[key][contentTypeId] = 0;
@@ -148,9 +152,7 @@ define([
                         });
                     }
                 });
-//
             }
-
         });
 
         return FilterController;

@@ -23,6 +23,13 @@ define(function (require) {
 
         defaultFlytoHeight : 15000.0,
 
+        filters: {
+
+            METADATA_CONTENT_TYPE: 'metadata-content-type',
+            SOURCE_ID: 'source-id'
+
+        },
+
         init : function(){
             // use this function to initialize variables that rely on others
             var props = this;

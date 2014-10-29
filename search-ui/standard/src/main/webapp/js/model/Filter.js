@@ -14,8 +14,9 @@ define([
     'backbone',
     'underscore',
     'moment',
-    'jquery'
-], function(Backbone, _, moment,$) {
+    'jquery',
+    'properties'
+], function(Backbone, _, moment,$, Properties) {
     "use strict";
 
     var CQL_DATE_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss[Z]';
@@ -26,7 +27,7 @@ define([
         'string': ['contains','equals','startsWith','endsWith'],
         'date': ['before','after'],
         'number': ['=','!=','>','>=','<','<='],
-        'geo': ['intersects','contains']
+        'anyGeo': ['intersects','contains']
     };
 
 
@@ -34,7 +35,7 @@ define([
         'metacard-type': 'metacard_type_name'
     };
 
-    var excludeFromCQL = ['source-id'];
+    var excludeFromCQL = [Properties.filters.SOURCE_ID];
 
     Filter.CQLFactory = {
         toCQL: function(filter){
@@ -88,7 +89,7 @@ define([
                 throw new Error("Not implemented yet." + filter);
             },
             'contains': function(filter){
-                if(filter.get('fieldName') === 'metadata-content-type'){
+                if(filter.get('fieldName') === Properties.filters.METADATA_CONTENT_TYPE){
                     var split = filter.get('stringValue1').split(',');
                     var joinArray = [];
                     _.each(split, function(subContentType){
@@ -159,11 +160,9 @@ define([
         toCQL: function(){
             var cqlArray = this.map(function(model){
                 if(!_.contains(excludeFromCQL,model.get('fieldName'))){
-                    console.log(model);
                     return model.toCQL();
                 }
             });
-            console.log(cqlArray);
             cqlArray = _.compact(cqlArray);
             return cqlArray.join(' AND ');  // TODO this needs to support OR at some point for content type.
         },
@@ -236,7 +235,6 @@ define([
                 if(existingFilterString && existingFilterString !== ''){
                     var parsedIds = existingFilterString.split(',');
                     _.each(parsedIds, function(parsedId){
-                        console.log(parsedId);
                         if(parsedId !== value){
                             groupedFilterValues.push(parsedId);
                         }
@@ -249,6 +247,17 @@ define([
                 fieldType: 'string',
                 fieldOperator: 'contains',
                 stringValue1: groupedFilterValues.join(',')
+            }));
+        },
+
+        replaceGroupFilter: function(fieldName, value){
+            var existingFilters = this.where({fieldName: fieldName});
+            this.remove(existingFilters);
+            this.add(new Filter.Model({
+                fieldName: fieldName,
+                fieldType: 'string',
+                fieldOperator: 'contains',
+                stringValue1: value
             }));
         }
     });

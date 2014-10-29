@@ -74,8 +74,6 @@ define([
 
                 this.filters = new Filter.Collection();
 
-                console.log('init');
-
                 if (this.get('scheduled')) {
                     this.startSearch();
                 }
@@ -188,7 +186,7 @@ define([
                     _.each(types.split(','), function (type) {
 
                         filters.push(new Filter.Model({
-                            fieldName: 'metadata-content-type',
+                            fieldName: properties.filters.METADATA_CONTENT_TYPE,
                             fieldType: 'string',
                             fieldOperator: 'contains',
                             stringValue1: $(type).text()  // TODO fix this issue.  for some reason this is coming back as html from the server.
@@ -242,20 +240,14 @@ define([
                     }));
                 }
 
-
-
-                var sources = this.get('src').split(',');
-                if(sources){
-                    console.log(sources);
-
-//                    _.each(sources, function(source){
-                        filters.push(new Filter.Model({
-                            fieldName: 'source-id',
-                            fieldType: 'string',
-                            fieldOperator: 'equals',
-                            stringValue1: this.get('src')
-                        }));
-//                    });
+                var src = this.get('src');
+                if(src){
+                    filters.push(new Filter.Model({
+                        fieldName: properties.filters.SOURCE_ID,
+                        fieldType: 'string',
+                        fieldOperator: 'equals',
+                        stringValue1: src
+                    }));
                 }
 
                 return filters;
@@ -314,7 +306,7 @@ define([
                 if (types) {
                     var typeFilters = [];
                     _.each(types.split(','), function (type) {
-                        typeFilters.push('"metadata-content-type" = ' + this.getValue(type));
+                        typeFilters.push('"' + properties.filters.METADATA_CONTENT_TYPE + '" = ' + this.getValue(type));
                     }, this);
 
                     filters.push(this.logicalCql(typeFilters, 'OR'));
@@ -417,7 +409,7 @@ define([
                 data.cql = this.filters.toCQL();
 
                 // lets handle the source-id filters since they are not included in the cql.
-                var sourceFilters = this.filters.where({fieldName: 'source-id'});
+                var sourceFilters = this.filters.where({fieldName: properties.filters.SOURCE_ID});
                 var sources = [];
                 _.each(sourceFilters, function(sourceFilter){
                     sources.push(sourceFilter.get('stringValue1'));

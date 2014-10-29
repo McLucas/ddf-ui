@@ -18,12 +18,13 @@ define([
     'icanhaz',
     'wreqr',
     'moment',
+    'properties',
     'js/model/Filter',
     './FacetCollection.view',
     './FilterCollection.view',
     'text!templates/filter/filter.layout.handlebars'
 ],
-    function ($, _, Marionette, ich, wreqr, moment, Filter, FacetCollectionView,FilterCollectionView, filterLayoutTemplate) {
+    function ($, _, Marionette, ich, wreqr, moment, Properties, Filter, FacetCollectionView,FilterCollectionView, filterLayoutTemplate) {
         "use strict";
 
         ich.addTemplate('filterLayoutTemplate', filterLayoutTemplate);
@@ -55,7 +56,7 @@ define([
                 this.listenTo(wreqr.vent, 'toggleFilterMenu', this.toggleFilterVisibility);
                 this.listenTo(wreqr.vent, 'facetSelected', this.addFacet);
                 this.listenTo(wreqr.vent, 'facetDeSelected', this.removeFacet);
-                this.listenTo(wreqr.vent, 'requestSourceFilterRemoved', this.requestSourceFilterRemoved);
+                this.listenTo(wreqr.vent, 'facetFocused', this.focusFacet);
 
                 wreqr.vent.trigger('processSearch', this.model);
             },
@@ -100,58 +101,17 @@ define([
                 wreqr.vent.trigger('toggleFilterMenu');
             },
             addFacet: function(facet){
-
-                //this.collection.addContentTypeToFilters(facet.fieldValue); // hard coding to content type for right now.
-
-                // lets remove any filters first.
-
-                // let the filter model figure it out.
                 this.collection.addValueToGroupFilter(facet.fieldName, facet.fieldValue);
-
-//                var existingFilters = this.collection.where({fieldName: facet.fieldName});
-//                this.collection.remove(existingFilters);
-//
-//                this.collection.add(new Filter.Model({
-//                    fieldName: facet.fieldName,
-//                    fieldType: 'string', // TODO not all facets will support equals and strings
-//                    fieldOperator: 'contains',
-//                    stringValue1: facet.fieldValue
-//                }));
                 this.collection.trimUnfinishedFilters();
                 this.queryObject.startSearch();
             },
             removeFacet: function(facet){
-
-
                 this.collection.removeValueFromGroupFilter(facet.fieldName, facet.fieldValue);
-
-
-//                if(facet.fieldName === 'metadata-content-type') {
-//                    this.collection.removeContentTypeFromFilters(facet.fieldValue); // hard coding to content type for right now.
-//                } else if(facet.fieldName === 'source-id') {
-//                    this.collection.removeSourcFromFilters(facet.fieldValue); // hard coding to content type for right now.
-//                } else {
-//                    debugger;
-//                    return;
-//                }
-
-//                this.collection.removeContentTypeFromFilters(facet.fieldValue); // hard coding to content type for right now.
-
-                // lets remove any filters first.
-//                var existingFilters = this.collection.where({fieldName: facet.fieldName});
-//                this.collection.remove(existingFilters);
-//
-//                this.collection.add(new Filter.Model({
-//                    fieldName: facet.fieldName,
-//                    fieldType: 'string', // TODO not all facets will support equals and strings
-//                    fieldOperator: 'contains',
-//                    stringValue1: facet.fieldValue
-//                }));
                 this.collection.trimUnfinishedFilters();
                 this.queryObject.startSearch();
             },
-            requestSourceFilterRemoved: function(sourceId){
-                this.collection.removeSourceFromFilters(sourceId);
+            focusFacet: function(facet){
+                this.collection.replaceGroupFilter(facet.fieldName, facet.fieldValue);
                 this.collection.trimUnfinishedFilters();
                 this.queryObject.startSearch();
             }

@@ -18,10 +18,11 @@ define([
     'icanhaz',
     'wreqr',
     'moment',
+    'properties',
     'js/model/Filter',
     './FilterItem.view'
 ],
-    function ($, _, Marionette, ich, wreqr, moment, Filter, FilterItemView) {
+    function ($, _, Marionette, ich, wreqr, moment, Properties, Filter, FilterItemView) {
         "use strict";
 
         var FilterCollectionView = Marionette.CollectionView.extend({
@@ -53,6 +54,12 @@ define([
             },
             removePressed: function(modelToRemove){
                 this.collection.remove(modelToRemove);
+            },
+            addItemView: function(item, ItemView, index){
+                var fieldName = item.get('fieldName');
+                if (fieldName !== Properties.filters.SOURCE_ID && fieldName !== Properties.filters.METADATA_CONTENT_TYPE) {
+                    Backbone.Marionette.CollectionView.prototype.addItemView.apply(this, arguments);
+                }
             }
         });
 
