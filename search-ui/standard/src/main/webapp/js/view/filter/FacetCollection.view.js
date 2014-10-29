@@ -37,7 +37,7 @@ define([
                 if(queryObject === undefined){
                     return; // just quit.
                 }
-                var filteredContentTypeIds = queryObject.filters.getContentTypes();
+                var filteredContentTypeIds = queryObject.filters.getGroupedFilterValues('metadata-content-type');
                 var facetPairs = _.pairs(options.facetCounts);
                 var flattenedFacets = _.map(facetPairs, function(pair){
                     var pairsMapped = _.map(_.pairs(pair[1]), function(innerPair){

@@ -105,15 +105,8 @@ define([
 
                 // lets remove any filters first.
 
-
-                if(facet.fieldName === 'metadata-content-type') {
-                    this.collection.addContentTypeToFilters(facet.fieldValue); // hard coding to content type for right now.
-                } else if(facet.fieldName === 'source-id') {
-                    this.collection.addSourceToFilters(facet.fieldValue); // hard coding to content type for right now.
-                } else {
-                    debugger;
-                    return;
-                }
+                // let the filter model figure it out.
+                this.collection.addValueToGroupFilter(facet.fieldName, facet.fieldValue);
 
 //                var existingFilters = this.collection.where({fieldName: facet.fieldName});
 //                this.collection.remove(existingFilters);
@@ -130,15 +123,17 @@ define([
             removeFacet: function(facet){
 
 
+                this.collection.removeValueFromGroupFilter(facet.fieldName, facet.fieldValue);
 
-                if(facet.fieldName === 'metadata-content-type') {
-                    this.collection.removeContentTypeFromFilters(facet.fieldValue); // hard coding to content type for right now.
-                } else if(facet.fieldName === 'source-id') {
-                    this.collection.removeSourcFromFilters(facet.fieldValue); // hard coding to content type for right now.
-                } else {
-                    debugger;
-                    return;
-                }
+
+//                if(facet.fieldName === 'metadata-content-type') {
+//                    this.collection.removeContentTypeFromFilters(facet.fieldValue); // hard coding to content type for right now.
+//                } else if(facet.fieldName === 'source-id') {
+//                    this.collection.removeSourcFromFilters(facet.fieldValue); // hard coding to content type for right now.
+//                } else {
+//                    debugger;
+//                    return;
+//                }
 
 //                this.collection.removeContentTypeFromFilters(facet.fieldValue); // hard coding to content type for right now.
 

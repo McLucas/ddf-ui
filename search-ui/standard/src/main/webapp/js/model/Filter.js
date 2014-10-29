@@ -189,114 +189,66 @@ define([
         },
 
 
-        getContentTypes: function(){
-            var newSourceIds = [];
-            var existingFilters = this.where({fieldName: 'metadata-content-type'});
+        getGroupedFilterValues: function(fieldName){
+            var groupedFilterValues = [];
+            var existingFilters = this.where({fieldName: fieldName});
             _.each(existingFilters, function(existingFilter){
-                var existingFilterString = existingFilter.get('stringValue1');
+                var existingFilterString = existingFilter.get('stringValue1');  // we will assume string for group filters
                 if(existingFilterString && existingFilterString !== ''){
                     var parsedIds = existingFilterString.split(',');
                     _.each(parsedIds, function(parsedId){
-                        newSourceIds.push(parsedId);
+                        groupedFilterValues.push(parsedId);
                     });
                 }
             });
-            return _.uniq(newSourceIds);
+            return _.uniq(groupedFilterValues);
         },
 
-        addContentTypeToFilters: function(sourceId){
-            var existingFilters = this.where({fieldName: 'metadata-content-type'});
-            var newSourceIds = [];
+        addValueToGroupFilter: function(fieldName, value){
+            var existingFilters = this.where({fieldName: fieldName});
+            var groupedFilterValues = [];
             _.each(existingFilters, function(existingFilter){
-                var existingFilterString = existingFilter.get('stringValue1');
+                var existingFilterString = existingFilter.get('stringValue1');  // we assume string group filters.
                 if(existingFilterString && existingFilterString !== ''){
                     var parsedIds = existingFilterString.split(',');
                     _.each(parsedIds, function(parsedId){
-                        if(parsedId !== sourceId){
-                            newSourceIds.push(parsedId);
+                        if(parsedId !== value){
+                            groupedFilterValues.push(parsedId);
                         }
                     });
                 }
             });
-            newSourceIds.push(sourceId);
+            groupedFilterValues.push(value);
             this.remove(existingFilters);
             this.add(new Filter.Model({
-                fieldName: 'metadata-content-type',
+                fieldName: fieldName,
                 fieldType: 'string',
                 fieldOperator: 'contains',
-                stringValue1: newSourceIds.join(',')
+                stringValue1: groupedFilterValues.join(',')
             }));
         },
-        removeContentTypeFromFilters: function(sourceId){
-            var existingFilters = this.where({fieldName: 'metadata-content-type'});
-            var newSourceIds = [];
+
+        removeValueFromGroupFilter: function(fieldName, value){
+            var existingFilters = this.where({fieldName: fieldName});
+            var groupedFilterValues = [];
             _.each(existingFilters, function(existingFilter){
-                var existingFilterString = existingFilter.get('stringValue1');
+                var existingFilterString = existingFilter.get('stringValue1'); // we assume string group filters.
                 if(existingFilterString && existingFilterString !== ''){
                     var parsedIds = existingFilterString.split(',');
                     _.each(parsedIds, function(parsedId){
                         console.log(parsedId);
-                        if(parsedId !== sourceId){
-                            newSourceIds.push(parsedId);
+                        if(parsedId !== value){
+                            groupedFilterValues.push(parsedId);
                         }
                     });
                 }
             });
             this.remove(existingFilters);
             this.add(new Filter.Model({
-                fieldName: 'metadata-content-type',
+                fieldName: fieldName,
                 fieldType: 'string',
                 fieldOperator: 'contains',
-                stringValue1: newSourceIds.join(',')
-            }));
-        },
-
-
-        removeSourceFromFilters: function(sourceId){
-            var existingFilters = this.where({fieldName: 'source-id'});
-            var newSourceIds = [];
-            _.each(existingFilters, function(existingFilter){
-                var existingFilterString = existingFilter.get('stringValue1');
-                if(existingFilterString && existingFilterString !== ''){
-                    var parsedIds = existingFilterString.split(',');
-                    _.each(parsedIds, function(parsedId){
-                        console.log(parsedId);
-                        if(parsedId !== sourceId){
-                            newSourceIds.push(parsedId);
-                        }
-                    });
-                }
-            });
-            this.remove(existingFilters);
-            this.add(new Filter.Model({
-                fieldName: 'source-id',
-                fieldType: 'string',
-                fieldOperator: 'contains',
-                stringValue1: newSourceIds.join(',')
-            }));
-        },
-        addSourceId: function(sourceId){
-            var existingFilters = this.where({fieldName: 'source-id'});
-            var newSourceIds = [];
-            _.each(existingFilters, function(existingFilter){
-                var existingFilterString = existingFilter.get('stringValue1');
-                if(existingFilterString && existingFilterString !== ''){
-                    var parsedIds = existingFilterString.split(',');
-                    _.each(parsedIds, function(parsedId){
-                        console.log(parsedId);
-                        if(parsedId !== sourceId){
-                            newSourceIds.push(parsedId);
-                        }
-                    });
-                }
-            });
-            newSourceIds.push(sourceId);
-            this.remove(existingFilters);
-            this.add(new Filter.Model({
-                fieldName: 'source-id',
-                fieldType: 'string',
-                fieldOperator: 'contains',
-                stringValue1: newSourceIds.join(',')
+                stringValue1: groupedFilterValues.join(',')
             }));
         }
     });
