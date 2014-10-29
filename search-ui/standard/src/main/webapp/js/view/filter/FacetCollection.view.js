@@ -34,6 +34,9 @@ define([
             initialize: function(options){
 
                 var queryObject = this.model.parents[0];
+                if(queryObject === undefined){
+                    return; // just quit.
+                }
                 var filteredContentTypeIds = queryObject.filters.getContentTypes();
                 console.log(filteredContentTypeIds);
                 var facetPairs = _.pairs(options.facetCounts);

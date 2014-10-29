@@ -30,10 +30,11 @@ define([
             template: 'facetItemTemplate',
             tagName: 'tr',
             events: {
-                'click .remove': 'removeClicked',
-                'click .add': 'addClicked'
+                'click .remove-facet': 'removeClicked',
+                'click .add-facet': 'addClicked'
             },
             removeClicked: function(evt){
+                console.log('remove clicked');
                 var element = this.$(evt.currentTarget);
                 var valueCount = element.attr('data-value-count');
                 var fieldValue = element.attr('data-field-value');
@@ -48,6 +49,9 @@ define([
                 return false;
             },
             addClicked: function(evt){
+
+                console.log('add clicked');
+
                 var element = this.$(evt.currentTarget);
                 var valueCount = element.attr('data-value-count');
                 var fieldValue = element.attr('data-field-value');

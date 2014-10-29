@@ -92,7 +92,7 @@ define([
                     var split = filter.get('stringValue1').split(',');
                     var joinArray = [];
                     _.each(split, function(subContentType){
-                        ' ( ' + joinArray.push(Filter.CQLFactory.formatFieldName(filter.get('fieldName')) + ' ILIKE ' + Filter.CQLFactory.getValue(filter.get('stringValue1'))) + ' ) ';
+                        joinArray.push(Filter.CQLFactory.formatFieldName(filter.get('fieldName')) + ' ILIKE ' + Filter.CQLFactory.getValue(subContentType));
                     });
                     return joinArray.join(' OR ');
                 } else {

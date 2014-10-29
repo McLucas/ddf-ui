@@ -32,7 +32,7 @@ define([
             template: 'filterLayoutTemplate',
             className: 'filter-view',
             events: {
-                'click .add':'addPressed',
+                'click .add-filter':'addFilterPressed',
                 'click .apply':'applyPressed',
                 'click .filter-status': 'toggleFilterView'
             },
@@ -54,6 +54,7 @@ define([
                 }
                 this.listenTo(wreqr.vent, 'toggleFilterMenu', this.toggleFilterVisibility);
                 this.listenTo(wreqr.vent, 'facetSelected', this.addFacet);
+                this.listenTo(wreqr.vent, 'facetDeSelected', this.addFacet);  // todo fix this.
                 this.listenTo(wreqr.vent, 'requestSourceFilterRemoved', this.requestSourceFilterRemoved);
 
                 wreqr.vent.trigger('processSearch', this.model);
@@ -77,7 +78,7 @@ define([
                     this.$el.toggleClass('active', true);
                 }
             },
-            addPressed: function(){
+            addFilterPressed: function(){
                 var view = this;
                 var fields = wreqr.reqres.request('getFields');
                 var initialSelection = _.first(fields);
@@ -99,6 +100,9 @@ define([
                 wreqr.vent.trigger('toggleFilterMenu');
             },
             addFacet: function(facet){
+
+                //this.collection.addContentTypeToFilters(facet.fieldValue); // hard coding to content type for right now.
+
                 // lets remove any filters first.
                 var existingFilters = this.collection.where({fieldName: facet.fieldName});
                 this.collection.remove(existingFilters);
@@ -109,6 +113,23 @@ define([
                     fieldOperator: 'contains',
                     stringValue1: facet.fieldValue
                 }));
+                this.collection.trimUnfinishedFilters();
+                this.queryObject.startSearch();
+            },
+            removeFacet: function(facet){
+
+                this.collection.removeContentTypeFromFilters(facet.fieldValue); // hard coding to content type for right now.
+
+                // lets remove any filters first.
+//                var existingFilters = this.collection.where({fieldName: facet.fieldName});
+//                this.collection.remove(existingFilters);
+//
+//                this.collection.add(new Filter.Model({
+//                    fieldName: facet.fieldName,
+//                    fieldType: 'string', // TODO not all facets will support equals and strings
+//                    fieldOperator: 'contains',
+//                    stringValue1: facet.fieldValue
+//                }));
                 this.collection.trimUnfinishedFilters();
                 this.queryObject.startSearch();
             },
